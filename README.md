@@ -27,13 +27,12 @@ Le défi principal résidait dans l'hétérogénéité des sources de données :
 > **Solution :** Développement d'un script Python (`pandas`) pour normaliser ces flux, gérer les encodages et typer les données avant l'insertion en base.
 
 ### 2. Data Cleaning & Qualité
-Les données brutes comportaient de nombreuses valeurs manquantes (NaN) qui faussaient les analyses.
+Les données brutes (JSON, CSV, Excel) contenaient des incohérences, notamment sur la localisation des clients.
 
 | Colonne | Problème | Stratégie de Nettoyage (Code Python) |
 | :--- | :--- | :--- |
-| `cout_transport` | Valeurs manquantes | **Imputation par la Médiane** (Robuste aux outliers). |
-| `retard` | Données vides | **Imputation Logique** (0 = Pas de retard signalé). |
-| `statut_livraison` | Incomplet | Catégorisation explicite "Inconnu" pour traçabilité. |
+| `city` (Client) | Valeurs manquantes (NULL) pour le transporteur "MedLog" | **Imputation Déductive** (Correction basée sur la logique métier : MedLog est basé à Marseille $\to$ `fillna`). |
+| `Join Keys` | Données dispersées (Excel vs CSV) | **Unification des clés** (`client_id`, `hub`) pour garantir la cohérence avant l'export SQL. |
 
 ### 3. Modélisation & Base de Données (PostgreSQL)
 Conception d'un schéma en étoile (Star Schema) pour faciliter les analyses BI :
